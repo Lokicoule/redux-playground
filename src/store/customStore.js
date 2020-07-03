@@ -1,4 +1,4 @@
-const createStore = reducer => {
+export default function createStore(reducer) {
     let state;
     let listeners = [];
 
@@ -19,8 +19,6 @@ const createStore = reducer => {
         };
     }
 
-
     return { dispatch, getState, subscribe }
 };
 
-export default createStore;

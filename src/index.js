@@ -3,21 +3,25 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
-import store from './store';
-import * as actionCreators from './actions';
+import configureStore from './store/configureStore';
+import * as actions from './store/tasks';
 
+const store = configureStore();
 
 const unsubscribe = store.subscribe(() => {
-    console.log("handle store change!", store.getState());
-});
-
-store.dispatch(actionCreators.taskAdded("desc1"));
-console.log("1", store.getState());
-store.dispatch(actionCreators.taskRemoved(1));
-console.log("2", store.getState());
+    console.log("Store changed", store.getState());
+    
+  })
+store.dispatch(actions.taskAdded("description1"));
+console.log(store.getState());
+store.dispatch(actions.taskDone(1));
+console.log(store.getState());
+store.dispatch(actions.taskRemoved(1));
+console.log(store.getState());
 unsubscribe();
-store.dispatch(actionCreators.taskAdded("desc1"));
-console.log("3", store.getState());
+store.dispatch(actions.taskAdded("description2"));
+console.log(store.getState());
+
 ReactDOM.render(
   <React.StrictMode>
     <App />
