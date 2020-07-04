@@ -1,7 +1,6 @@
-import {createStore} from 'redux';
-import reducer from './tasks';
+import { configureStore } from '@reduxjs/toolkit';
+import reducer from './reducer';
 
-
-export default function configureStore() {
-    return createStore(reducer);
+export default function () {
+    return configureStore({ reducer });
 };

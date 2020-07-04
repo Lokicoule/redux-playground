@@ -5,22 +5,26 @@ import App from './App';
 import * as serviceWorker from './serviceWorker';
 import configureStore from './store/configureStore';
 import * as actions from './store/tasks';
+import {projectAdded} from './store/projects';
 
 const store = configureStore();
 
 const unsubscribe = store.subscribe(() => {
-    console.log("Store changed", store.getState());
-    
-  })
-store.dispatch(actions.taskAdded("description1"));
+  console.log("Store changed", store.getState());
+
+});
+store.dispatch(projectAdded({
+  name:"test"
+}));
+store.dispatch(actions.taskAdded({description: "description1"}));
 console.log(store.getState());
-store.dispatch(actions.taskDone(1));
+store.dispatch(actions.taskDone({id: 1}));
 console.log(store.getState());
-store.dispatch(actions.taskRemoved(1));
+//store.dispatch(actions.taskRemoved({id: 1}));
 console.log(store.getState());
 unsubscribe();
-store.dispatch(actions.taskAdded("description2"));
-console.log(store.getState());
+store.dispatch(actions.taskAdded({description: "description2"}));
+console.log(store.getState()); 
 
 ReactDOM.render(
   <React.StrictMode>
