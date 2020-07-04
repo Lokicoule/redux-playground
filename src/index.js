@@ -4,8 +4,15 @@ import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 import configureStore from './store/configureStore';
-import * as actions from './store/tasks';
-import {projectAdded} from './store/projects';
+import {
+  taskAdded,
+  taskDone,
+  taskAssignedToUser,
+  getTasksByUser,
+  getDoneTasks
+} from './store/tasks';
+import { projectAdded } from './store/projects';
+import { userAdded } from './store/users';
 
 const store = configureStore();
 
@@ -13,18 +20,36 @@ const unsubscribe = store.subscribe(() => {
   console.log("Store changed", store.getState());
 
 });
-store.dispatch(projectAdded({
-  name:"test"
+store.dispatch(userAdded({
+  name: "me"
 }));
-store.dispatch(actions.taskAdded({description: "description1"}));
+store.dispatch(projectAdded({
+  name: "test"
+}));
+
+store.dispatch(taskAdded({ description: "description1" }));
 console.log(store.getState());
-store.dispatch(actions.taskDone({id: 1}));
+
+store.dispatch(taskDone({ id: 1 }));
 console.log(store.getState());
-//store.dispatch(actions.taskRemoved({id: 1}));
-console.log(store.getState());
+
 unsubscribe();
-store.dispatch(actions.taskAdded({description: "description2"}));
-console.log(store.getState()); 
+
+store.dispatch(taskAdded({ description: "description2" }));
+console.log(store.getState());
+
+const doneTasks1 = getDoneTasks(store.getState());
+const doneTasks2 = getDoneTasks(store.getState());
+console.log("memoized : ", doneTasks1 === doneTasks2);
+
+store.dispatch(taskAssignedToUser({
+  taskId: 1,
+  userId: 1
+}))
+
+console.log(store.getState());
+const myTasks = getTasksByUser(1)(store.getState());
+console.log(myTasks);
 
 ReactDOM.render(
   <React.StrictMode>

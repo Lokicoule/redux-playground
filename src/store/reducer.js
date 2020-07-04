@@ -1,8 +1,6 @@
 import { combineReducers } from 'redux';
-import projectsReducer from './projects';
-import tasksReducer from './tasks';
+import entitiesReducer from './entities';
 
 export default combineReducers({
-    projects: projectsReducer,
-    tasks: tasksReducer
+    entities: entitiesReducer
 });
