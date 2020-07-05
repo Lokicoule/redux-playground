@@ -16,18 +16,12 @@ import { userAdded } from './store/users';
 
 const store = configureStore();
 
-store.dispatch((dispatch, getState) => {
-  // Call an API
-  // when promise is resolved => dispatch
-  dispatch({
-    type : 'tasksReceived', 
-    tasks: [1, 2, 3]
-  })
-  console.log(getState());
-  
-  // if promise is rejected => dispatch
+store.dispatch({
+  type: 'error',
+  payload: {
+    message: "An error occurred"
+  }
 });
-
 ReactDOM.render(
   <React.StrictMode>
     <App />
