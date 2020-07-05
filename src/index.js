@@ -16,40 +16,17 @@ import { userAdded } from './store/users';
 
 const store = configureStore();
 
-const unsubscribe = store.subscribe(() => {
-  console.log("Store changed", store.getState());
-
+store.dispatch((dispatch, getState) => {
+  // Call an API
+  // when promise is resolved => dispatch
+  dispatch({
+    type : 'tasksReceived', 
+    tasks: [1, 2, 3]
+  })
+  console.log(getState());
+  
+  // if promise is rejected => dispatch
 });
-store.dispatch(userAdded({
-  name: "me"
-}));
-store.dispatch(projectAdded({
-  name: "test"
-}));
-
-store.dispatch(taskAdded({ description: "description1" }));
-console.log(store.getState());
-
-store.dispatch(taskDone({ id: 1 }));
-console.log(store.getState());
-
-unsubscribe();
-
-store.dispatch(taskAdded({ description: "description2" }));
-console.log(store.getState());
-
-const doneTasks1 = getDoneTasks(store.getState());
-const doneTasks2 = getDoneTasks(store.getState());
-console.log("memoized : ", doneTasks1 === doneTasks2);
-
-store.dispatch(taskAssignedToUser({
-  taskId: 1,
-  userId: 1
-}))
-
-console.log(store.getState());
-const myTasks = getTasksByUser(1)(store.getState());
-console.log(myTasks);
 
 ReactDOM.render(
   <React.StrictMode>
