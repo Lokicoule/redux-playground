@@ -3,8 +3,6 @@ import { createSelector } from 'reselect';
 import { apiCallBegan } from './api';
 import moment from 'moment';
 
-let lastId = 1;
-
 const slice = createSlice({
     name: 'tasks',
     initialState: {
@@ -25,16 +23,14 @@ const slice = createSlice({
             tasks.lastFetch = Date.now()
         },
         taskAdded: (tasks, action) => {
-            tasks.list.push({
-                id: lastId++,
-                description: action.payload.description,
-                done: false
-            });
-        }, taskDone: (tasks, action) => {
+            tasks.list.push(action.payload);
+        },
+        taskDone: (tasks, action) => {
             const index = tasks.list.findIndex(task => task.id === action.payload.id);
             tasks.list[index].done = true;
-        }, taskAssignedToUser: (tasks, action) => {
-            const { taskId, userId } = action.payload;
+        },
+        taskAssignedToUser: (tasks, action) => {
+            const { id: taskId, userId } = action.payload;
             const index = tasks.list.findIndex(task => task.id === taskId);
             tasks.list[index].userId = userId;
         }
@@ -47,7 +43,7 @@ export default slice.reducer;
 //Action creators
 const url = "/tasks";
 export const loadTasks = () => (dispatch, getState) => {
-    const {lastFetch} = getState().entities.tasks;
+    const { lastFetch } = getState().entities.tasks;
     const diffInMinutes = moment().diff(moment(lastFetch), 'minutes');
     if (diffInMinutes < 2) return;
     dispatch(apiCallBegan({
@@ -57,6 +53,27 @@ export const loadTasks = () => (dispatch, getState) => {
         onError: tasksRequestFailed.type
     }));
 };
+
+export const addTask = task => apiCallBegan({
+    url,
+    method: "post",
+    data: task,
+    onSuccess: taskAdded.type
+});
+
+export const assignTaskToUser = (taskId, userId) => apiCallBegan({
+    url: url + '/' + taskId,
+    method: "patch",
+    data: { userId },
+    onSuccess: taskAssignedToUser.type
+});
+
+export const doTask = taskId => apiCallBegan({
+    url: url + '/' + taskId,
+    method: "patch",
+    data: { resolved: true },
+    onSuccess: taskDone.type
+});
 
 export const getDoneTasks = createSelector(
     state => state.entities.tasks,

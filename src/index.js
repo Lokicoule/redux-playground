@@ -5,12 +5,14 @@ import App from './App';
 import * as serviceWorker from './serviceWorker';
 import configureStore from './store/configureStore';
 import * as actions from './store/api';
-import { loadTasks } from './store/tasks';
+import { loadTasks, doTask, assignTaskToUser } from './store/tasks';
 
 const store = configureStore();
-
 store.dispatch(loadTasks());
-setTimeout(() => store.dispatch(loadTasks()), 2000);
+
+store.dispatch(doTask(1));
+store.dispatch(assignTaskToUser(2, 3));
+
 ReactDOM.render(
   <React.StrictMode>
     <App />
