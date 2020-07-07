@@ -4,24 +4,13 @@ import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 import configureStore from './store/configureStore';
-import {
-  taskAdded,
-  taskDone,
-  taskAssignedToUser,
-  getTasksByUser,
-  getDoneTasks
-} from './store/tasks';
-import { projectAdded } from './store/projects';
-import { userAdded } from './store/users';
+import * as actions from './store/api';
+import { loadTasks } from './store/tasks';
 
 const store = configureStore();
 
-store.dispatch({
-  type: 'error',
-  payload: {
-    message: "An error occurred"
-  }
-});
+store.dispatch(loadTasks());
+setTimeout(() => store.dispatch(loadTasks()), 2000);
 ReactDOM.render(
   <React.StrictMode>
     <App />
