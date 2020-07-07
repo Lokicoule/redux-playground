@@ -4,14 +4,13 @@ import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 import configureStore from './store/configureStore';
-import * as actions from './store/api';
-import { loadTasks, doTask, assignTaskToUser } from './store/tasks';
+import { loadTasks, addTask, doTask, assignTaskToUser } from './store/tasks';
 
 const store = configureStore();
 store.dispatch(loadTasks());
-
-store.dispatch(doTask(1));
-store.dispatch(assignTaskToUser(2, 3));
+store.dispatch(addTask({description:"loik"}));
+store.dispatch(doTask(3));
+store.dispatch(assignTaskToUser(4, 2));
 
 ReactDOM.render(
   <React.StrictMode>

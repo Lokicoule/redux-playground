@@ -1,15 +1,16 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, createEntityAdapter } from '@reduxjs/toolkit';
 import { createSelector } from 'reselect';
 import { apiCallBegan } from './api';
 import moment from 'moment';
 
+const tasksAdapter = createEntityAdapter();
+
 const slice = createSlice({
     name: 'tasks',
-    initialState: {
-        list: [],
+    initialState: tasksAdapter.getInitialState({
         loading: false,
-        lastFetch: null
-    },
+        lastFecth: null
+    }),
     reducers: {
         tasksRequested: (tasks, action) => {
             tasks.loading = true;
@@ -17,23 +18,13 @@ const slice = createSlice({
         tasksRequestFailed: (tasks, action) => {
             tasks.loading = false;
         },
-        tasksReceived: (tasks, action) => {
-            tasks.list = action.payload;
+        tasksReceived: (tasks, action) => {            
+            tasksAdapter.setAll(tasks, action.payload);
             tasks.loading = false;
-            tasks.lastFetch = Date.now()
         },
-        taskAdded: (tasks, action) => {
-            tasks.list.push(action.payload);
-        },
-        taskDone: (tasks, action) => {
-            const index = tasks.list.findIndex(task => task.id === action.payload.id);
-            tasks.list[index].done = true;
-        },
-        taskAssignedToUser: (tasks, action) => {
-            const { id: taskId, userId } = action.payload;
-            const index = tasks.list.findIndex(task => task.id === taskId);
-            tasks.list[index].userId = userId;
-        }
+        taskAdded: tasksAdapter.addOne,
+        taskDone: tasksAdapter.updateOne,
+        taskAssignedToUser: tasksAdapter.updateOne
     }
 });
 
@@ -43,9 +34,8 @@ export default slice.reducer;
 //Action creators
 const url = "/tasks";
 export const loadTasks = () => (dispatch, getState) => {
-    const { lastFetch } = getState().entities.tasks;
-    const diffInMinutes = moment().diff(moment(lastFetch), 'minutes');
-    if (diffInMinutes < 2) return;
+    console.log(getState());
+    
     dispatch(apiCallBegan({
         url,
         onStart: tasksRequested.type,
