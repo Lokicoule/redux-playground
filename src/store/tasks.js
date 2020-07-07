@@ -37,7 +37,7 @@ const slice = createSlice({
     }
 });
 
-export const { taskAdded, taskDone, taskAssignedToUser, tasksReceived, tasksRequested, tasksRequestFailed } = slice.actions;
+const { taskAdded, taskDone, taskAssignedToUser, tasksReceived, tasksRequested, tasksRequestFailed } = slice.actions;
 export default slice.reducer;
 
 //Action creators
