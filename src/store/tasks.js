@@ -1,16 +1,16 @@
 import { createSlice, createEntityAdapter } from '@reduxjs/toolkit';
 import { createSelector } from 'reselect';
 import { apiCallBegan } from './api';
-import moment from 'moment';
 
-const tasksAdapter = createEntityAdapter();
+//const tasksAdapter = createEntityAdapter();
 
 const slice = createSlice({
     name: 'tasks',
-    initialState: tasksAdapter.getInitialState({
+    initialState: {
+        list: [],
         loading: false,
         lastFecth: null
-    }),
+    },
     reducers: {
         tasksRequested: (tasks, action) => {
             tasks.loading = true;
@@ -19,12 +19,22 @@ const slice = createSlice({
             tasks.loading = false;
         },
         tasksReceived: (tasks, action) => {            
-            tasksAdapter.setAll(tasks, action.payload);
+            tasks.list = action.payload;
             tasks.loading = false;
+            tasks.lastFetch = Date.now();
         },
-        taskAdded: tasksAdapter.addOne,
-        taskDone: tasksAdapter.updateOne,
-        taskAssignedToUser: tasksAdapter.updateOne
+        taskAdded: (tasks, action) => {
+            tasks.list.push(action.payload);
+        },
+        taskDone: (tasks, action) => {
+            const index = tasks.list.findIndex(task => task.id === action.payload.id);
+            tasks.list[index].done = true;
+        },
+        taskAssignedToUser: (tasks, action) => {
+            const { id: taskId, userId } = action.payload;
+            const index = tasks.list.findIndex(task => task.id === taskId);
+            tasks.list[index].userId = userId;
+        }
     }
 });
 
@@ -33,9 +43,7 @@ export default slice.reducer;
 
 //Action creators
 const url = "/tasks";
-export const loadTasks = () => (dispatch, getState) => {
-    console.log(getState());
-    
+export const loadTasks = () => (dispatch, getState) => {    
     dispatch(apiCallBegan({
         url,
         onStart: tasksRequested.type,
